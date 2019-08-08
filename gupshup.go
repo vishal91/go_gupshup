@@ -8,7 +8,7 @@ import (
 var apiUrl string
 var apiParams url.Values
 
-func EnterpriseInitialize(opts map[string]string) {
+func EnterpriseInitialize(opts url.Values) {
 
 	apiUrl = "http://enterprise.smsgupshup.com/GatewayAPI/rest"
 	apiParams.Add("v", "1.1")
