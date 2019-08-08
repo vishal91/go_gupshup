@@ -6,54 +6,59 @@ import (
 ) 
 
 var apiUrl string
-var apiParams url.Values
+var apiParams map[string]string
 
-func EnterpriseInitialize(opts url.Values) {
+func EnterpriseInitialize(opts map[string]string) {
 
 	apiUrl = "http://enterprise.smsgupshup.com/GatewayAPI/rest"
-	apiParams.Add("v", "1.1")
-	apiParams.Add("auth_scheme", "PLAIN")
+	apiParams["v"] =  "1.1"
+	apiParams["auth_scheme"] = "PLAIN"
 
 	if val, ok := opts["api_url"]; ok {
 		apiUrl = val 
 	}
 
 	if val ,ok := opts["userId"]; ok {
-		apiParams.Add("userId",val)
+		apiParams["userId"] = val
 	} 
 
 	if val, ok := opts["password"]; ok {
-		apiParams.Add("password",val)
+		apiParams["password"] = val
 	} 
 
 	if val, ok := opts["token"]; ok {
-		apiParams.Add("auth_scheme", "TOKEN")
-		apiParams.Add("token", val)
-		apiParams.Del("password")
+		apiParams["auth_scheme"] = "TOKEN"
+		apiParams["token"] = val
+		delete(apiParams,"password")
 	}
 }
 
-func callApi(opts url.Values) {
+func callApi(opts map[string]string) {
+	var params url.Values
 	for k, v := range opts {
-		apiParams.Add(k, v[0])
+		apiParams[k] = v
 	}
 
-	_, err := http.PostForm(apiUrl, apiParams)
+	for k, v := range apiParams {
+		params.Add(k,v)
+	}
+
+	_, err := http.PostForm(apiUrl, params)
 
 	if err != nil {
 
 	}
 }
 
-func sendMessage(opts url.Values) string {
+func sendMessage(opts map[string]string) string {
 	var msg string 
 	var number string 
 	if val, ok := opts["msg"]; ok {
-		msg = val[0]
+		msg = val
 	}
 
 	if val, ok := opts["send_to"]; ok {
-		number = val[0]
+		number = val
 	}
 
 	if len(number) < 12 {
@@ -69,34 +74,34 @@ func sendMessage(opts url.Values) string {
 	}
 
 	if _, ok := opts["msg_type"]; !ok {
-		opts.Add("msg_type", "TEXT")
+		opts["msg_type"] = "TEXT"
 	}
 
 	callApi(opts)
 	return ""
 }
 
-func SendFlashMessage(opts url.Values) {
-	opts.Add("msg_type", "FLASH")
+func SendFlashMessage(opts map[string]string) {
+	opts["msg_type"] = "FLASH"
 	sendMessage(opts)
 }
 
-func SendTextMessage(opts url.Values) {
-	opts.Add("msg_type", "TEXT")
+func SendTextMessage(opts map[string]string) {
+	opts["msg_type"] = "TEXT"
 	sendMessage(opts)
 }
 
-func SendVCard(opts url.Values) {
-	opts.Add("msg_type", "VCARD")
+func SendVCard(opts map[string]string) {
+	opts["msg_type"] = "VCARD"
 	sendMessage(opts)
 }
 
-func SendUnicodeMessage(opts url.Values) {
-	opts.Add("msg_type", "UNICODE_TEXT")
+func SendUnicodeMessage(opts map[string]string) {
+	opts["msg_type"] = "UNICODE_TEXT"
 	sendMessage(opts)
 }
 
-func GroupPost(opts url.Values) string {
+func GroupPost(opts map[string]string) string {
 
 	if _,ok := opts["group_name"]; !ok {
 		return "Invalid group name"
@@ -110,7 +115,7 @@ func GroupPost(opts url.Values) string {
 		return "Invalid message type"
 	}
 
-	opts.Add("method", "post_group")
+	opts["method"] = "post_group"
 	callApi(opts)
 	return ""
 }
