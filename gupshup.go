@@ -5,12 +5,15 @@ import (
 	"net/http"
 ) 
 
-var apiUrl string
-var apiParams map[string]string
+type Gupshup struct {
+	apiURL string
+	apiParams map[string]string
+}
 
-func EnterpriseInitialize(opts map[string]string) {
+func EnterpriseInitialize(opts map[string]string) *Gupshup {
 
-	apiUrl = "http://enterprise.smsgupshup.com/GatewayAPI/rest"
+	apiUrl := "http://enterprise.smsgupshup.com/GatewayAPI/rest"
+	var apiParams map[string]string
 	apiParams["v"] =  "1.1"
 	apiParams["auth_scheme"] = "PLAIN"
 
@@ -31,33 +34,35 @@ func EnterpriseInitialize(opts map[string]string) {
 		apiParams["token"] = val
 		delete(apiParams,"password")
 	}
+
+	return &Gupshup{apiUrl, apiParams}
 }
 
-func callApi(opts map[string]string) {
+func callApi(gupshup *Gupshup) {
 	var params url.Values
-	for k, v := range opts {
-		apiParams[k] = v
+	for k, v := range gupshup.apiParams {
+		gupshup.apiParams[k] = v
 	}
 
-	for k, v := range apiParams {
+	for k, v := range gupshup.apiParams {
 		params.Add(k,v)
 	}
 
-	_, err := http.PostForm(apiUrl, params)
+	_, err := http.PostForm(gupshup.apiURL, params)
 
 	if err != nil {
 
 	}
 }
 
-func sendMessage(opts map[string]string) string {
+func sendMessage(gupshup *Gupshup) string {
 	var msg string 
 	var number string 
-	if val, ok := opts["msg"]; ok {
+	if val, ok := gupshup.apiParams["msg"]; ok {
 		msg = val
 	}
 
-	if val, ok := opts["send_to"]; ok {
+	if val, ok := gupshup.apiParams["send_to"]; ok {
 		number = val
 	}
 
@@ -73,49 +78,49 @@ func sendMessage(opts map[string]string) string {
 		return "Message should be less than 725 characters long"
 	}
 
-	if _, ok := opts["msg_type"]; !ok {
-		opts["msg_type"] = "TEXT"
+	if _, ok := gupshup.apiParams["msg_type"]; !ok {
+		gupshup.apiParams["msg_type"] = "TEXT"
 	}
 
-	callApi(opts)
+	callApi(gupshup)
 	return ""
 }
 
-func SendFlashMessage(opts map[string]string) {
-	opts["msg_type"] = "FLASH"
-	sendMessage(opts)
+func SendFlashMessage(gupshup *Gupshup) {
+	gupshup.apiParams["msg_type"] = "FLASH"
+	sendMessage(gupshup)
 }
 
-func SendTextMessage(opts map[string]string) {
-	opts["msg_type"] = "TEXT"
-	sendMessage(opts)
+func SendTextMessage(gupshup *Gupshup) {
+	gupshup.apiParams["msg_type"] = "TEXT"
+	sendMessage(gupshup)
 }
 
-func SendVCard(opts map[string]string) {
-	opts["msg_type"] = "VCARD"
-	sendMessage(opts)
+func SendVCard(gupshup *Gupshup) {
+	gupshup.apiParams["msg_type"] = "VCARD"
+	sendMessage(gupshup)
 }
 
-func SendUnicodeMessage(opts map[string]string) {
-	opts["msg_type"] = "UNICODE_TEXT"
-	sendMessage(opts)
+func SendUnicodeMessage(gupshup *Gupshup) {
+	gupshup.apiParams["msg_type"] = "UNICODE_TEXT"
+	sendMessage(gupshup)
 }
 
-func GroupPost(opts map[string]string) string {
+func GroupPost(gupshup *Gupshup) string {
 
-	if _,ok := opts["group_name"]; !ok {
+	if _,ok := gupshup.apiParams["group_name"]; !ok {
 		return "Invalid group name"
 	}
 
-	if _,ok := opts["msg"]; !ok {
+	if _,ok := gupshup.apiParams["msg"]; !ok {
 		return "Invalid message" 
 	}
-
-	if _,ok := opts["msg_type"]; !ok {
+ 
+	if _,ok := gupshup.apiParams["msg_type"]; !ok {
 		return "Invalid message type"
 	}
 
-	opts["method"] = "post_group"
-	callApi(opts)
+	gupshup.apiParams["method"] = "post_group"
+	callApi(gupshup)
 	return ""
 }
