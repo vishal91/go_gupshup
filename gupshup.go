@@ -3,6 +3,7 @@ package go_gupshup
 import (
 	"net/url"
 	"net/http"
+	"fmt"
 ) 
 
 type Gupshup struct {
@@ -51,7 +52,7 @@ func callApi(gupshup *Gupshup) {
 	_, err := http.PostForm(gupshup.apiURL, params)
 
 	if err != nil {
-
+		fmt.Print("Error in sending message via gupshup:", err)
 	}
 }
 
