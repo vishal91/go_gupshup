@@ -12,31 +12,29 @@ type Gupshup struct {
 }
 
 func EnterpriseInitialize(opts map[string]string) *Gupshup {
-
 	apiUrl := "http://enterprise.smsgupshup.com/GatewayAPI/rest"
-	var apiParams map[string]string
-	apiParams["v"] =  "1.1"
-	apiParams["auth_scheme"] = "PLAIN"
+	opts["v"] =  "1.1"
+	opts["auth_scheme"] = "PLAIN"
 
 	if val, ok := opts["api_url"]; ok {
 		apiUrl = val 
 	}
 
 	if val ,ok := opts["userId"]; ok {
-		apiParams["userId"] = val
+		opts["userId"] = val
 	} 
 
 	if val, ok := opts["password"]; ok {
-		apiParams["password"] = val
+		opts["password"] = val
 	} 
 
 	if val, ok := opts["token"]; ok {
-		apiParams["auth_scheme"] = "TOKEN"
-		apiParams["token"] = val
-		delete(apiParams,"password")
+		opts["auth_scheme"] = "TOKEN"
+		opts["token"] = val
+		delete(opts,"password")
 	}
 
-	return &Gupshup{apiUrl, apiParams}
+	return &Gupshup{apiUrl, opts}
 }
 
 func callApi(gupshup *Gupshup) {
