@@ -16,7 +16,7 @@ func EnterpriseInitialize(opts map[string]string) *Gupshup {
 	apiUrl := "http://enterprise.smsgupshup.com/GatewayAPI/rest"
 	opts["v"] =  "1.1"
 	opts["auth_scheme"] = "PLAIN"
-
+	opts["method"] = "sendMessage"
 	if val, ok := opts["api_url"]; ok {
 		apiUrl = val 
 	}
