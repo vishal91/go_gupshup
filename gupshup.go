@@ -58,7 +58,7 @@ func callApi(gupshup *Gupshup) error {
 		panic(err)
 	}
 
-	log.Print("Response for gupshup",string(body)
+	log.Print("Response for gupshup",string(body))
 	return err
 }
 
