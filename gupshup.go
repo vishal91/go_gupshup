@@ -37,7 +37,7 @@ func EnterpriseInitialize(opts map[string]string) *Gupshup {
 	return &Gupshup{apiUrl, opts}
 }
 
-func callApi(gupshup *Gupshup) {
+func callApi(gupshup *Gupshup) error {
 	var params url.Values
 	for k, v := range gupshup.apiParams {
 		gupshup.apiParams[k] = v
@@ -49,9 +49,7 @@ func callApi(gupshup *Gupshup) {
 
 	_, err := http.PostForm(gupshup.apiURL, params)
 
-	if err != nil {
-		fmt.Print("Error in sending message via gupshup:", err)
-	}
+	return err
 }
 
 func sendMessage(gupshup *Gupshup) string {
