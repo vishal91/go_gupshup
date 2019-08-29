@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"log"
 	"io/ioutil"
-	"encoding/json"
 ) 
 
 type Gupshup struct {
