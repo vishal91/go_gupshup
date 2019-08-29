@@ -4,6 +4,8 @@ import (
 	"net/url"
 	"net/http"
 	"log"
+	"io/ioutil"
+	"encoding/json"
 ) 
 
 type Gupshup struct {
@@ -46,9 +48,22 @@ func callApi(gupshup *Gupshup) error {
 	for k, v := range gupshup.apiParams {
 		params.Add(k,v)
 	}
-
 	r, err := http.PostForm(gupshup.apiURL, params)
-	log.Print("Response for gupshup",r)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer r.Body.Close()
+
+	// read the payload, in this case, Jhon's info
+	body, err := ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		panic(err)
+	}
+
+	log.Print("Response for gupshup",body)
 	return err
 }
 
