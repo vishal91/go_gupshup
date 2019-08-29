@@ -79,7 +79,7 @@ func sendMessage(gupshup *Gupshup) (error, string) {
 	}
 
 	err := callApi(gupshup)
-	return err, ""
+	return err, "Gupshup api call failing"
 }
 
 func SendFlashMessage(gupshup *Gupshup) (error, string) {
