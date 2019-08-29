@@ -67,7 +67,7 @@ func (gupshup *Gupshup) callApi2() error {
 	return err
 }
 
-func (gupshup *Gupshup) sendMessage (error, string) {
+func sendMessage(gupshup *Gupshup) (error, string) {
 	var msg string 
 	var number string 
 	if val, ok := gupshup.apiParams["msg"]; ok {
