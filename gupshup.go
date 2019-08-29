@@ -37,7 +37,7 @@ func EnterpriseInitialize(opts map[string]string) *Gupshup {
 }
 
 func callApi(gupshup *Gupshup) error {
-	var params url.Values
+	params := url.Values{}
 	for k, v := range gupshup.apiParams {
 		gupshup.apiParams[k] = v
 	}
