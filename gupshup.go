@@ -40,9 +40,6 @@ func EnterpriseInitialize(opts map[string]string) *Gupshup {
 
 func callApi(gupshup *Gupshup) error {
 	params := url.Values{}
-	for k, v := range gupshup.apiParams {
-		gupshup.apiParams[k] = v
-	}
 
 	for k, v := range gupshup.apiParams {
 		params.Add(k,v)
@@ -55,33 +52,17 @@ func callApi(gupshup *Gupshup) error {
 
 	defer r.Body.Close()
 
-	// read the payload, in this case, Jhon's info
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
 		panic(err)
 	}
 
-	log.Print("Response for gupshup",body)
+	log.Print("Response for gupshup",string(body)
 	return err
 }
 
-func (gupshup *Gupshup) callApi2() error {
-	params := url.Values{}
-	for k, v := range gupshup.apiParams {
-		gupshup.apiParams[k] = v
-	}
-
-	for k, v := range gupshup.apiParams {
-		params.Add(k,v)
-	}
-
-	_, err := http.PostForm(gupshup.apiURL, params)
-
-	return err
-}
-
-func sendMessage(gupshup *Gupshup) (error, string) {
+func (gupshup *Gupshup) sendMessage() (error, string) {
 	var msg string 
 	var number string 
 	if val, ok := gupshup.apiParams["msg"]; ok {
@@ -112,27 +93,27 @@ func sendMessage(gupshup *Gupshup) (error, string) {
 	return err, "Gupshup api call failing"
 }
 
-func SendFlashMessage(gupshup *Gupshup) (error, string) {
+func (gupshup *Gupshup) SendFlashMessage() (error, string) {
 	gupshup.apiParams["msg_type"] = "FLASH"
-	return sendMessage(gupshup)
+	return gupshup.sendMessage()
 }
 
-func SendTextMessage(gupshup *Gupshup) (error, string) {
+func (gupshup *Gupshup) SendTextMessage() (error, string) {
 	gupshup.apiParams["msg_type"] = "TEXT"
-	return sendMessage(gupshup)
+	return gupshup.sendMessage()
 }
 
-func SendVCard(gupshup *Gupshup) (error, string) {
+func (gupshup *Gupshup) SendVCard() (error, string) {
 	gupshup.apiParams["msg_type"] = "VCARD"
-	return sendMessage(gupshup)
+	return gupshup.sendMessage()
 }
 
-func SendUnicodeMessage(gupshup *Gupshup) (error, string) {
+func (gupshup *Gupshup) SendUnicodeMessage() (error, string) {
 	gupshup.apiParams["msg_type"] = "UNICODE_TEXT"
-	return sendMessage(gupshup)
+	return gupshup.sendMessage()
 }
 
-func GroupPost(gupshup *Gupshup) (error, string) {
+func (gupshup *Gupshup) GroupPost() (error, string) {
 
 	if _,ok := gupshup.apiParams["group_name"]; !ok {
 		return nil, "Invalid group name"
