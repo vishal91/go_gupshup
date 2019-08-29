@@ -3,6 +3,7 @@ package go_gupshup
 import (
 	"net/url"
 	"net/http"
+	"log"
 ) 
 
 type Gupshup struct {
@@ -46,12 +47,27 @@ func callApi(gupshup *Gupshup) error {
 		params.Add(k,v)
 	}
 
+	r, err := http.PostForm(gupshup.apiURL, params)
+	log.Print("Response for gupshup",r)
+	return err
+}
+
+func (gupshup *Gupshup) callApi2() error {
+	params := url.Values{}
+	for k, v := range gupshup.apiParams {
+		gupshup.apiParams[k] = v
+	}
+
+	for k, v := range gupshup.apiParams {
+		params.Add(k,v)
+	}
+
 	_, err := http.PostForm(gupshup.apiURL, params)
 
 	return err
 }
 
-func sendMessage(gupshup *Gupshup) (error, string) {
+func (gupshup *Gupshup) sendMessage (error, string) {
 	var msg string 
 	var number string 
 	if val, ok := gupshup.apiParams["msg"]; ok {
