@@ -3,7 +3,6 @@ package go_gupshup
 import (
 	"net/url"
 	"net/http"
-	"fmt"
 ) 
 
 type Gupshup struct {
@@ -52,7 +51,7 @@ func callApi(gupshup *Gupshup) error {
 	return err
 }
 
-func sendMessage(gupshup *Gupshup) string {
+func sendMessage(gupshup *Gupshup) (error, string) {
 	var msg string 
 	var number string 
 	if val, ok := gupshup.apiParams["msg"]; ok {
@@ -64,60 +63,60 @@ func sendMessage(gupshup *Gupshup) string {
 	}
 
 	if len(number) < 12 {
-		return "Phone number is too short"
+		return nil,"Phone number is too short"
 	}
 
 	if len(number) > 12 {
-		return "Phone number is too long"
+		return nil,"Phone number is too long"
 	}	
 
 	if len(msg) > 724 {
-		return "Message should be less than 725 characters long"
+		return nil,"Message should be less than 725 characters long"
 	}
 
 	if _, ok := gupshup.apiParams["msg_type"]; !ok {
 		gupshup.apiParams["msg_type"] = "TEXT"
 	}
 
-	callApi(gupshup)
-	return ""
+	err := callApi(gupshup)
+	return err, ""
 }
 
-func SendFlashMessage(gupshup *Gupshup) {
+func SendFlashMessage(gupshup *Gupshup) (error, string) {
 	gupshup.apiParams["msg_type"] = "FLASH"
-	sendMessage(gupshup)
+	return sendMessage(gupshup)
 }
 
-func SendTextMessage(gupshup *Gupshup) {
+func SendTextMessage(gupshup *Gupshup) (error, string) {
 	gupshup.apiParams["msg_type"] = "TEXT"
-	sendMessage(gupshup)
+	return sendMessage(gupshup)
 }
 
-func SendVCard(gupshup *Gupshup) {
+func SendVCard(gupshup *Gupshup) (error, string) {
 	gupshup.apiParams["msg_type"] = "VCARD"
-	sendMessage(gupshup)
+	return sendMessage(gupshup)
 }
 
-func SendUnicodeMessage(gupshup *Gupshup) {
+func SendUnicodeMessage(gupshup *Gupshup) (error, string) {
 	gupshup.apiParams["msg_type"] = "UNICODE_TEXT"
-	sendMessage(gupshup)
+	return sendMessage(gupshup)
 }
 
-func GroupPost(gupshup *Gupshup) string {
+func GroupPost(gupshup *Gupshup) (error, string) {
 
 	if _,ok := gupshup.apiParams["group_name"]; !ok {
-		return "Invalid group name"
+		return nil, "Invalid group name"
 	}
 
 	if _,ok := gupshup.apiParams["msg"]; !ok {
-		return "Invalid message" 
+		return nil, "Invalid message" 
 	}
  
 	if _,ok := gupshup.apiParams["msg_type"]; !ok {
-		return "Invalid message type"
+		return nil, "Invalid message type"
 	}
 
 	gupshup.apiParams["method"] = "post_group"
-	callApi(gupshup)
-	return ""
+	err := callApi(gupshup)
+	return err,""
 }
