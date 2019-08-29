@@ -21,8 +21,8 @@ func EnterpriseInitialize(opts map[string]string) *Gupshup {
 		apiUrl = val 
 	}
 
-	if val ,ok := opts["userId"]; ok {
-		opts["userId"] = val
+	if val ,ok := opts["userid"]; ok {
+		opts["userid"] = val
 	} 
 
 	if val, ok := opts["password"]; ok {
